@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\Idea\Pagination\IdeaPaginationResourceCollection;
 use App\Models\Idea;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 class IdeaController extends Controller
@@ -12,9 +14,14 @@ class IdeaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $ideas = Idea::when($request->has('types'), function (Builder $query) use ($request) {
+            return $query->whereIn('Type', explode(',', $request->types));
+        })
+        ->paginate();
+
+        return response()->json(new IdeaPaginationResourceCollection($ideas), 200);
     }
 
     /**
