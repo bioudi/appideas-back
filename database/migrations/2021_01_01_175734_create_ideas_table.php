@@ -15,6 +15,15 @@ class CreateIdeasTable extends Migration
     {
         Schema::create('ideas', function (Blueprint $table) {
             $table->id();
+            $table->string('name', 250);
+            $table->string('url', 250);
+            $table->string('upvotes')->nullable();
+            $table->string('downloads')->nullable();
+            $table->string('price')->nullable();
+            $table->double('rating');
+            $table->text('description');
+            $table->string('category');
+            $table->enum('type', ['WEBAPP', 'ANDROID', 'IOS', 'EXTENSION'])->default('WEBAPP');
             $table->timestamps();
         });
     }
