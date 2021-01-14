@@ -17,7 +17,13 @@ class IdeaController extends Controller
     public function index(Request $request)
     {
         $ideas = Idea::when($request->has('types'), function (Builder $query) use ($request) {
-            return $query->whereIn('Type', explode(',', $request->types));
+            return $query->whereIn('type', explode(',', $request->types));
+        })
+        ->when($request->has('min_rating') && $request->has('max_rating'), function (Builder $query) use ($request) {
+            return $query->whereBetween('rating', [$request->min_rating, $request->max_rating]);
+        })
+        ->when($request->has('search_query'), function (Builder $query) use ($request) {
+            return $query->whereRaw('MATCH (name, description) AGAINST (?)' , explode(' ', $request->search_query));
         })
         ->paginate();
 
